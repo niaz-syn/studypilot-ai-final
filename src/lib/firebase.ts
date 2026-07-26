@@ -4,12 +4,12 @@ import { getFirestore, doc, getDocFromServer } from "firebase/firestore";
 
 // Fallback configuration if firebase-applet-config.json is not present
 const defaultFirebaseConfig = {
-  apiKey: "demo-api-key",
-  authDomain: "studypilot-ai.firebaseapp.com",
-  projectId: "studypilot-ai",
-  storageBucket: "studypilot-ai.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456",
+  apiKey: (import.meta as any).env?.VITE_FIREBASE_API_KEY || "demo-api-key",
+  authDomain: (import.meta as any).env?.VITE_FIREBASE_AUTH_DOMAIN || "studypilot-ai.firebaseapp.com",
+  projectId: (import.meta as any).env?.VITE_FIREBASE_PROJECT_ID || "studypilot-ai",
+  storageBucket: (import.meta as any).env?.VITE_FIREBASE_STORAGE_BUCKET || "studypilot-ai.appspot.com",
+  messagingSenderId: (import.meta as any).env?.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: (import.meta as any).env?.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef123456",
 };
 
 let firebaseConfig: any = defaultFirebaseConfig;
