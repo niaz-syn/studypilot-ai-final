@@ -53,7 +53,7 @@ async function startServer() {
   });
 
   // 1. AI Chat Assistant Route
-  app.post("/api/ai/chat", async (req, res) => {
+  const chatHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { message, chatHistory = [] } = req.body;
       if (!message || typeof message !== "string") {
@@ -84,10 +84,13 @@ async function startServer() {
       console.error("AI Chat Error:", error);
       res.status(500).json({ error: error.message || "Failed to generate response from Gemini AI" });
     }
-  });
+  };
+
+  app.post("/api/ai/chat", chatHandler);
+  app.post("/api/chat", chatHandler);
 
   // 2. Study Plan Generator Route
-  app.post("/api/ai/plan", async (req, res) => {
+  const planHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { subjects, availableHours = 3, examDate, goals = "" } = req.body;
 
@@ -130,10 +133,13 @@ Return a JSON object matching this structure strictly:
       console.error("AI Plan Error:", error);
       res.status(500).json({ error: error.message || "Failed to generate study plan" });
     }
-  });
+  };
+
+  app.post("/api/ai/plan", planHandler);
+  app.post("/api/ai-roadmap", planHandler);
 
   // 3. Quiz Generator Route
-  app.post("/api/ai/quiz", async (req, res) => {
+  const quizHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { topic, difficulty = "Medium", questionCount = 5 } = req.body;
 
@@ -176,10 +182,13 @@ Return a JSON object matching this schema strictly:
       console.error("AI Quiz Error:", error);
       res.status(500).json({ error: error.message || "Failed to generate quiz" });
     }
-  });
+  };
 
-  // 4. Notes Summarizer Route (Standard + Multi-mode)
-  app.post("/api/ai/summarize", async (req, res) => {
+  app.post("/api/ai/quiz", quizHandler);
+  app.post("/api/generate-quiz", quizHandler);
+
+  // 4. Notes Summarizer Route
+  const summarizeHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { notesText, mode = "detailed", fileName = "" } = req.body;
       if (!notesText || typeof notesText !== "string") {
@@ -244,10 +253,13 @@ Return a JSON object matching this schema strictly:
       console.error("AI Summarizer Error:", error);
       res.status(500).json({ error: error.message || "Failed to summarize notes" });
     }
-  });
+  };
+
+  app.post("/api/ai/summarize", summarizeHandler);
+  app.post("/api/summarize-document", summarizeHandler);
 
   // 4b. AI Chat with Document
-  app.post("/api/ai/doc-chat", async (req, res) => {
+  const docChatHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { docText, docName, question, chatHistory = [] } = req.body;
       if (!question) {
@@ -281,10 +293,13 @@ Return a JSON object matching this schema strictly:
       console.error("Doc Chat Error:", error);
       res.status(500).json({ error: error.message || "Failed to answer document question" });
     }
-  });
+  };
+
+  app.post("/api/ai/doc-chat", docChatHandler);
+  app.post("/api/document-chat", docChatHandler);
 
   // 4c. Custom Flashcards Generator
-  app.post("/api/ai/flashcards", async (req, res) => {
+  const flashcardsHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { text, cardCount = 8, subject = "General" } = req.body;
       if (!text) {
@@ -324,7 +339,10 @@ Return a JSON object:
       console.error("Flashcards Error:", error);
       res.status(500).json({ error: error.message || "Failed to generate flashcards" });
     }
-  });
+  };
+
+  app.post("/api/ai/flashcards", flashcardsHandler);
+  app.post("/api/generate-flashcards", flashcardsHandler);
 
   // 5. Motivational Coach Route
   app.post("/api/ai/motivation", async (req, res) => {
@@ -352,7 +370,7 @@ Return a JSON object:
   });
 
   // 6. Assignment Assistant Breakdown Route
-  app.post("/api/ai/assignment-breakdown", async (req, res) => {
+  const breakdownHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { assignmentTitle, description, deadline, subject } = req.body;
       if (!assignmentTitle) {
@@ -397,7 +415,10 @@ Return JSON:
       console.error("Assignment Breakdown Error:", error);
       res.status(500).json({ error: error.message || "Failed to breakdown assignment" });
     }
-  });
+  };
+
+  app.post("/api/ai/assignment-breakdown", breakdownHandler);
+  app.post("/api/smart-breakdown", breakdownHandler);
 
   // 7. Exam Readiness Score Estimation Route
   app.post("/api/ai/exam-readiness", async (req, res) => {

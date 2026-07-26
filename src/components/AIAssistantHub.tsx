@@ -284,18 +284,18 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
 
       {/* Tab 1: AI Academic Tutor Chat */}
       {activeTab === "chat" && (
-        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4 min-h-[500px] flex flex-col justify-between">
-          <div className="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar p-2">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4 h-[580px] flex flex-col justify-between w-full">
+          <div className="flex-1 space-y-4 overflow-y-auto custom-scrollbar p-2 min-h-0">
             {(chatMessages || []).map((msg) => (
               <div
                 key={msg.id}
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-xl p-4 rounded-2xl text-xs leading-relaxed ${
+                  className={`max-w-[75%] sm:max-w-[70%] p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                     msg.role === "user"
-                      ? "bg-indigo-600 text-white font-medium"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60"
+                      ? "bg-indigo-600 text-white font-medium rounded-tr-none shadow-sm"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60 rounded-tl-none"
                   }`}
                 >
                   <p className="whitespace-pre-line">{msg.content}</p>
@@ -315,18 +315,18 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
             )}
           </div>
 
-          <form onSubmit={handleSendChat} className="flex items-center space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <form onSubmit={handleSendChat} className="flex items-center space-x-2 pt-3 border-t border-slate-100 dark:border-slate-800 shrink-0">
             <input
               type="text"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               placeholder="Ask a question or explain a complex concept..."
-              className="flex-1 px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
+              className="flex-1 px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
             />
             <button
               type="submit"
               disabled={chatLoading || !chatInput.trim()}
-              className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs shadow-md transition flex items-center space-x-1"
+              className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center space-x-1 shrink-0"
             >
               <Send className="w-4 h-4" />
             </button>

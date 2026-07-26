@@ -152,7 +152,7 @@ export const SummarizerView: React.FC<SummarizerViewProps> = ({
   };
 
   return (
-    <div className="space-y-8 pb-12 max-w-6xl mx-auto animate-fade-in">
+    <div className="space-y-8 pb-12 w-full max-w-7xl mx-auto animate-fade-in">
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white flex items-center space-x-3">
@@ -166,9 +166,9 @@ export const SummarizerView: React.FC<SummarizerViewProps> = ({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8 items-start">
         {/* Left Form Panel */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="w-full space-y-6">
           {/* Source Document Selector */}
           <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
             <label className="block text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
@@ -257,7 +257,7 @@ export const SummarizerView: React.FC<SummarizerViewProps> = ({
         </div>
 
         {/* Right Output Panel */}
-        <div className="lg:col-span-7">
+        <div className="w-full min-w-0">
           <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm min-h-[500px] flex flex-col justify-between space-y-6">
             {savedNoteSuccess && (
               <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 text-xs font-bold flex items-center space-x-2">
