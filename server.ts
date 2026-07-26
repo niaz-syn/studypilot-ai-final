@@ -25,32 +25,43 @@ Always:
 • When answering questions about uploaded documents, rely on the uploaded content whenever possible.
 • If information is missing, clearly state that instead of making it up.`;
 
-async function startServer() {
-  const app = express();
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+export const app = express();
 
-  app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "10mb" }));
 
-  // Initialize Gemini AI SDK safely
-  const getGeminiClient = () => {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      throw new Error("GEMINI_API_KEY environment variable is missing.");
-    }
-    return new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
-        },
+// Enable CORS for Vercel and local deployments
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Initialize Gemini AI SDK safely
+const getGeminiClient = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY environment variable is missing.");
+  }
+  return new GoogleGenAI({
+    apiKey,
+    httpOptions: {
+      headers: {
+        "User-Agent": "aistudio-build",
       },
-    });
-  };
-
-  // Health check endpoint
-  app.get("/api/health", (_req, res) => {
-    res.json({ status: "ok", service: "StudyPilot AI API" });
+    },
   });
+};
+
+// Health check endpoint
+app.get("/api/health", (_req, res) => {
+  res.json({ status: "ok", service: "StudyPilot AI API" });
+});
+
+async function startServer() {
 
   // 1. AI Chat Assistant Route
   const chatHandler = async (req: express.Request, res: express.Response) => {
@@ -421,7 +432,7 @@ Return JSON:
   app.post("/api/smart-breakdown", breakdownHandler);
 
   // 7. Exam Readiness Score Estimation Route
-  app.post("/api/ai/exam-readiness", async (req, res) => {
+  const examReadinessHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { subjectsData = [] } = req.body;
 
@@ -460,10 +471,13 @@ Return JSON:
       console.error("Exam Readiness Error:", error);
       res.status(500).json({ error: error.message || "Failed to compute exam readiness" });
     }
-  });
+  };
+
+  app.post("/api/ai/exam-readiness", examReadinessHandler);
+  app.post("/api/exam-readiness", examReadinessHandler);
 
   // 8. Productivity Insights Route
-  app.post("/api/ai/productivity-insights", async (req, res) => {
+  const productivityHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { streak = 1, totalHours = 0, completedAssignments = 0, pendingAssignments = 0 } = req.body;
 
@@ -503,10 +517,13 @@ Return JSON:
       console.error("Productivity Insights Error:", error);
       res.status(500).json({ error: error.message || "Failed to generate productivity insights" });
     }
-  });
+  };
+
+  app.post("/api/ai/productivity-insights", productivityHandler);
+  app.post("/api/productivity-insights", productivityHandler);
 
   // 9. Text Mind Map Outline Generator Route
-  app.post("/api/ai/mindmap", async (req, res) => {
+  const mindmapHandler = async (req: express.Request, res: express.Response) => {
     try {
       const { text, topic = "General" } = req.body;
       if (!text) {
@@ -550,9 +567,14 @@ Return JSON:
       console.error("Mindmap Error:", error);
       res.status(500).json({ error: error.message || "Failed to generate mind map" });
     }
-  });
+  };
+
+  app.post("/api/ai/mindmap", mindmapHandler);
+  app.post("/api/mindmap", mindmapHandler);
 
   // Vite middleware setup
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -572,4 +594,8 @@ Return JSON:
   });
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export default app;
