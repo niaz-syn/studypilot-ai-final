@@ -1,0 +1,6 @@
+{
+  "name": "StudyPilot AI",
+  "description": "Your AI-Powered Study Companion - Organize schedule, manage assignments, generate study plans & learn faster with AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

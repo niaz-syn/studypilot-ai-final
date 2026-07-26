@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+
+    function isExistingOwner() {
+      return isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Subjects collection
+    match /subjects/{subjectId} {
+      allow create: if isDocOwner();
+      allow read, update, delete: if isExistingOwner();
+    }
+
+    // Assignments collection
+    match /assignments/{assignmentId} {
+      allow create: if isDocOwner();
+      allow read, update, delete: if isExistingOwner();
+    }
+
+    // Study Sessions collection
+    match /studySessions/{sessionId} {
+      allow create: if isDocOwner();
+      allow read, update, delete: if isExistingOwner();
+    }
+
+    // AI History collection
+    match /aiHistory/{historyId} {
+      allow create: if isDocOwner();
+      allow read, update, delete: if isExistingOwner();
+    }
+  }
+}

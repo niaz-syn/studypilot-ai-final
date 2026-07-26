@@ -1,0 +1,107 @@
+{
+  "entities": {
+    "user": {
+      "title": "User Profile",
+      "description": "User preferences and study statistics",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "User unique identifier" },
+        "email": { "type": "string", "description": "User email" },
+        "displayName": { "type": "string", "description": "User full name" },
+        "photoURL": { "type": "string", "description": "User avatar URL" },
+        "weeklyGoalHours": { "type": "number", "description": "Weekly study goal in hours" },
+        "currentStreak": { "type": "number", "description": "Consecutive days study streak" },
+        "darkMode": { "type": "boolean", "description": "Theme preference" },
+        "notifications": { "type": "boolean", "description": "Notifications enabled" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["uid", "email"]
+    },
+    "subject": {
+      "title": "Subject",
+      "description": "Academic subjects or courses",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "color": { "type": "string" },
+        "teacher": { "type": "string" },
+        "credits": { "type": "number" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "name", "color"]
+    },
+    "assignment": {
+      "title": "Assignment",
+      "description": "Student homework, projects, and exams",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "deadline": { "type": "string" },
+        "priority": { "type": "string", "enum": ["High", "Medium", "Low"] },
+        "status": { "type": "string", "enum": ["Not Started", "In Progress", "Completed"] },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "title", "deadline", "priority", "status"]
+    },
+    "studySession": {
+      "title": "Study Session",
+      "description": "Scheduled or completed study blocks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "subjectId": { "type": "string" },
+        "date": { "type": "string" },
+        "durationMinutes": { "type": "number" },
+        "priority": { "type": "string", "enum": ["High", "Medium", "Low"] },
+        "status": { "type": "string", "enum": ["Scheduled", "Completed", "Cancelled"] },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "subjectId", "date", "durationMinutes", "status"]
+    },
+    "aiHistory": {
+      "title": "AI Interaction History",
+      "description": "Saved chats, generated plans, quizzes, and summaries",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["chat", "plan", "quiz", "summary", "coach"] },
+        "title": { "type": "string" },
+        "payload": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "type", "title", "payload"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/user" },
+      "description": "User profile collection"
+    },
+    "/subjects/{subjectId}": {
+      "schema": { "$ref": "#/entities/subject" },
+      "description": "Subjects collection"
+    },
+    "/assignments/{assignmentId}": {
+      "schema": { "$ref": "#/entities/assignment" },
+      "description": "Assignments collection"
+    },
+    "/studySessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/studySession" },
+      "description": "Study sessions collection"
+    },
+    "/aiHistory/{historyId}": {
+      "schema": { "$ref": "#/entities/aiHistory" },
+      "description": "AI interaction history collection"
+    }
+  }
+}
