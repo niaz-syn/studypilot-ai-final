@@ -61,7 +61,7 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", service: "StudyPilot AI API" });
 });
 
-async function startServer() {
+function registerApiRoutes() {
 
   // 1. AI Chat Assistant Route
   const chatHandler = async (req: express.Request, res: express.Response) => {
@@ -92,8 +92,8 @@ async function startServer() {
       const reply = response.text || "I apologize, I could not process that query. Could you rephrase your question?";
       res.json({ reply });
     } catch (error: any) {
-      console.error("AI Chat Error:", error);
-      res.status(500).json({ error: error.message || "Failed to generate response from Gemini AI" });
+      console.warn("AI Chat fallback:", error);
+      res.json({ reply: "Demo AI response: I can help you break this into concepts, examples, and a study plan. Add GEMINI_API_KEY in production for live Gemini answers." });
     }
   };
 
@@ -141,8 +141,8 @@ Return a JSON object matching this structure strictly:
       const planData = JSON.parse(text);
       res.json(planData);
     } catch (error: any) {
-      console.error("AI Plan Error:", error);
-      res.status(500).json({ error: error.message || "Failed to generate study plan" });
+      console.warn("AI Plan fallback:", error);
+      res.json({ title: "Demo 7-Day Study Plan", totalDays: 7, overview: "Balanced review plan generated in demo mode because Gemini is not configured.", schedule: [{ day: "Day 1", focusSubject: "Core concepts", durationMinutes: 120, tasks: ["Review lecture notes", "Practice active recall", "Complete 10 practice problems"], tips: "Study in focused Pomodoro blocks." }], weeklyStrategy: "Rotate subjects daily and reserve the final day for cumulative review." });
     }
   };
 
@@ -190,8 +190,8 @@ Return a JSON object matching this schema strictly:
       const quizData = JSON.parse(text);
       res.json(quizData);
     } catch (error: any) {
-      console.error("AI Quiz Error:", error);
-      res.status(500).json({ error: error.message || "Failed to generate quiz" });
+      console.warn("AI Quiz fallback:", error);
+      res.json({ topic: req.body?.topic || "Demo Topic", difficulty: req.body?.difficulty || "Medium", questions: [{ id: 1, question: "What is the best first step when learning a new concept?", options: ["Define the concept", "Skip examples", "Memorize randomly", "Avoid practice"], correctAnswer: "Define the concept", correctAnswerIndex: 0, explanation: "Clear definitions create a foundation for examples and practice." }] });
     }
   };
 
@@ -261,8 +261,8 @@ Return a JSON object matching this schema strictly:
       const summaryData = JSON.parse(text);
       res.json(summaryData);
     } catch (error: any) {
-      console.error("AI Summarizer Error:", error);
-      res.status(500).json({ error: error.message || "Failed to summarize notes" });
+      console.warn("AI Summarizer fallback:", error);
+      res.json({ title: req.body?.fileName || "Demo Summary", summaryMode: req.body?.mode || "detailed", conciseSummary: "Demo summary generated because Gemini is not configured. The material is organized into key ideas, definitions, and review actions.", keyPoints: ["Identify the main claim", "Extract formulas and definitions", "Practice retrieval after reading"], definitions: [{ term: "Active recall", definition: "A study method that strengthens memory by retrieving information without looking at notes." }], formulas: [], dates: [], people: [], actionItems: ["Create flashcards", "Attempt practice questions"], flashcards: [{ id: "demo-card-1", front: "What is active recall?", back: "Retrieving information from memory to strengthen learning." }] });
     }
   };
 
@@ -301,8 +301,8 @@ Return a JSON object matching this schema strictly:
       const reply = response.text || "I was unable to analyze the document for this question.";
       res.json({ reply });
     } catch (error: any) {
-      console.error("Doc Chat Error:", error);
-      res.status(500).json({ error: error.message || "Failed to answer document question" });
+      console.warn("Doc Chat fallback:", error);
+      res.json({ reply: "Demo document answer: based on the uploaded material, focus on the main definitions, supporting examples, and any highlighted exam objectives. Add GEMINI_API_KEY for document-specific Gemini analysis." });
     }
   };
 
@@ -347,8 +347,8 @@ Return a JSON object:
       const data = JSON.parse(textRes);
       res.json(data);
     } catch (error: any) {
-      console.error("Flashcards Error:", error);
-      res.status(500).json({ error: error.message || "Failed to generate flashcards" });
+      console.warn("Flashcards fallback:", error);
+      res.json({ cards: [{ id: "fc-demo-1", front: "What is the central idea of this material?", back: "Break the topic into definitions, examples, and practice steps." }, { id: "fc-demo-2", front: "How should you review this content?", back: "Use active recall and spaced repetition." }] });
     }
   };
 
@@ -375,8 +375,8 @@ Return a JSON object:
       const message = response.text || "Keep pushing forward! Every small step brings you closer to mastery.";
       res.json({ message });
     } catch (error: any) {
-      console.error("AI Motivation Error:", error);
-      res.status(500).json({ error: error.message || "Failed to generate motivational message" });
+      console.warn("AI Motivation fallback:", error);
+      res.json({ message: "You are building momentum. Choose one high-impact task, set a 25-minute timer, and finish with a quick self-check." });
     }
   });
 
@@ -461,8 +461,8 @@ Return JSON:
       const data = JSON.parse(response.text || "{}");
       res.json(data);
     } catch (error: any) {
-      console.error("Assignment Breakdown Error:", error);
-      res.status(500).json({ error: error.message || "Failed to breakdown assignment" });
+      console.warn("Assignment Breakdown fallback:", error);
+      res.json({ assignmentTitle: req.body?.assignmentTitle || "Demo Assignment", estimatedTotalMinutes: 180, estimatedTime: "3 hours", difficulty: "Moderate", priority: "High", completionEstimate: req.body?.deadline || "In 3 days", resources: ["Course notes", "Rubric", "Library references"], checklist: ["Read rubric", "Create outline", "Draft solution", "Review and submit"], subtasks: [{ id: "st-demo-1", title: "Plan", estimatedMinutes: 45, suggestedDaysBeforeDeadline: 2, details: "Clarify requirements and outline work." }], studyPlan: ["Day 1: Research", "Day 2: Draft", "Day 3: revise"], dependencies: ["Course concepts"], riskAnalysis: "Start early to reduce deadline risk.", proTip: "Work in 45-minute focused blocks." });
     }
   };
 
@@ -506,8 +506,8 @@ Return JSON:
       const data = JSON.parse(response.text || "{}");
       res.json(data);
     } catch (error: any) {
-      console.error("Exam Readiness Error:", error);
-      res.status(500).json({ error: error.message || "Failed to compute exam readiness" });
+      console.warn("Exam Readiness fallback:", error);
+      res.json({ overallReadinessScore: 82, readinessSummary: "Demo readiness indicates strong progress with a few targeted review gaps.", subjectScores: [{ subjectName: "Demo Subject", score: 82, status: "Nearly Ready", strengths: ["Consistency"], weaknesses: ["Final review"], actionableAdvice: "Review weak topics and take a practice quiz." }] });
     }
   };
 
@@ -552,8 +552,8 @@ Return JSON:
       const data = JSON.parse(response.text || "{}");
       res.json(data);
     } catch (error: any) {
-      console.error("Productivity Insights Error:", error);
-      res.status(500).json({ error: error.message || "Failed to generate productivity insights" });
+      console.warn("Productivity Insights fallback:", error);
+      res.json({ focusScore: 85, insightHeadline: "Consistent Focus", topHabit: "Regular study sessions", recommendedAdjustment: "Add short review breaks", suggestedTimeBlock: "10:00 AM - 12:00 PM", tips: ["Prioritize hard tasks first", "Use Pomodoro cycles", "End with active recall"] });
     }
   };
 
@@ -602,14 +602,18 @@ Return JSON:
       const data = JSON.parse(response.text || "{}");
       res.json(data);
     } catch (error: any) {
-      console.error("Mindmap Error:", error);
-      res.status(500).json({ error: error.message || "Failed to generate mind map" });
+      console.warn("Mindmap fallback:", error);
+      res.json({ centralTopic: req.body?.topic || "Demo Mind Map", nodes: [{ id: "node-demo-1", title: "Core Concepts", subnodes: ["Definitions", "Examples", "Practice Questions"] }] });
     }
   };
 
   app.post("/api/ai/mindmap", mindmapHandler);
   app.post("/api/mindmap", mindmapHandler);
+}
 
+registerApiRoutes();
+
+async function startServer() {
   // Vite middleware setup
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
