@@ -124,7 +124,7 @@ const chatHandler = async (req: express.Request, res: express.Response) => {
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -173,7 +173,7 @@ Return a JSON object matching this structure strictly:
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -223,7 +223,7 @@ Return a JSON object matching this schema strictly:
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -295,7 +295,7 @@ Return a JSON object matching this schema strictly:
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -337,7 +337,7 @@ const docChatHandler = async (req: express.Request, res: express.Response) => {
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -383,7 +383,7 @@ Return a JSON object:
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -413,7 +413,7 @@ app.post("/api/ai/motivation", async (req, res) => {
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -500,7 +500,7 @@ Return JSON:
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -546,7 +546,7 @@ Return JSON:
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -593,7 +593,7 @@ Return JSON:
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -645,7 +645,7 @@ Return JSON:
 
     const response = await callGeminiWithRetry(() =>
       ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
