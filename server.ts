@@ -65,17 +65,32 @@ const getGeminiClient = () => {
   });
 };
 
+// Helper to call Gemini with 1 retry on rate limit (429)
+async function callGeminiWithRetry<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (error: any) {
+    const msg = typeof error === "string" ? error : (error?.message || "");
+    if (error?.status === 429 || msg.includes("429") || msg.includes("quota") || msg.includes("RESOURCE_EXHAUSTED")) {
+      console.warn("[Gemini API] Rate limit encountered. Waiting 2.5s before retry...");
+      await new Promise((resolve) => setTimeout(resolve, 2500));
+      return await fn();
+    }
+    throw error;
+  }
+}
+
 function handleRouteError(error: any, res: express.Response, fallbackMessage: string) {
   console.error("AI Route Error:", error);
   const msg = typeof error === "string" ? error : (error?.message || "");
   if (msg.includes("GEMINI_API_KEY") || msg.includes("apiKey") || msg.includes("API key")) {
-    return res.status(500).json({ success: false, error: "Gemini API key is not configured.", message: "Please configure GEMINI_API_KEY in your environment variables." });
+    return res.status(500).json({ success: false, error: "Missing GEMINI_API_KEY", message: "Please configure GEMINI_API_KEY in your environment variables." });
   }
   if (error?.status === 401 || msg.includes("401") || (msg.includes("API_KEY_INVALID") || msg.includes("invalid API key"))) {
-    return res.status(401).json({ success: false, error: "Invalid Gemini API Key.", message: "The provided Gemini API key is invalid or missing permissions." });
+    return res.status(401).json({ success: false, error: "Invalid Gemini API Key", message: "The provided Gemini API key is invalid or missing permissions." });
   }
-  if (error?.status === 429 || msg.includes("429") || msg.includes("quota")) {
-    return res.status(429).json({ success: false, error: "Gemini quota exceeded.", message: "You have exceeded your Gemini API rate limit or quota. Please retry shortly." });
+  if (error?.status === 429 || msg.includes("429") || msg.includes("quota") || msg.includes("RESOURCE_EXHAUSTED")) {
+    return res.status(429).json({ success: false, error: "Quota exceeded", message: "Gemini API rate limit reached. Please wait a few seconds and try again." });
   }
   return res.status(500).json({ success: false, error: msg || fallbackMessage, message: fallbackMessage });
 }
@@ -107,14 +122,16 @@ const chatHandler = async (req: express.Request, res: express.Response) => {
 
     const prompt = `${formattedHistory ? `Previous Conversation:\n${formattedHistory}\n\n` : ""}Student: ${message}`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        temperature: 0.7,
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          temperature: 0.7,
+        },
+      })
+    );
 
     const reply = response.text || "I apologize, I could not process that query. Could you rephrase your question?";
     res.json({ success: true, reply });
@@ -154,14 +171,16 @@ Return a JSON object matching this structure strictly:
   "weeklyStrategy": "Overall summary of review strategy"
 }`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          responseMimeType: "application/json",
+        },
+      })
+    );
 
     const text = response.text || "{}";
     const planData = JSON.parse(text);
@@ -202,14 +221,16 @@ Return a JSON object matching this schema strictly:
   ]
 }`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          responseMimeType: "application/json",
+        },
+      })
+    );
 
     const text = response.text || "{}";
     const quizData = JSON.parse(text);
@@ -272,14 +293,16 @@ Return a JSON object matching this schema strictly:
   ]
 }`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          responseMimeType: "application/json",
+        },
+      })
+    );
 
     const text = response.text || "{}";
     const summaryData = JSON.parse(text);
@@ -312,14 +335,16 @@ const docChatHandler = async (req: express.Request, res: express.Response) => {
 
     const prompt = `${docContext}${formattedHistory ? `Previous Chat:\n${formattedHistory}\n\n` : ""}Student Question: ${question}\n\nAnswer the question accurately based primarily on the document context provided above.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        temperature: 0.5,
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          temperature: 0.5,
+        },
+      })
+    );
 
     const reply = response.text || "I was unable to analyze the document for this question.";
     res.json({ success: true, reply });
@@ -356,14 +381,16 @@ Return a JSON object:
   ]
 }`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          responseMimeType: "application/json",
+        },
+      })
+    );
 
     const textRes = response.text || "{}";
     const data = JSON.parse(textRes);
@@ -384,14 +411,16 @@ app.post("/api/ai/motivation", async (req, res) => {
     const ai = getGeminiClient();
     const prompt = `Provide an inspiring motivational message and 3 actionable study hacks for a student who has a ${streak}-day study streak and has completed ${completedTasksCount} tasks this week toward a target of ${goalHours} hours. Keep it positive, empathetic, and highly encouraging!`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        temperature: 0.8,
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          temperature: 0.8,
+        },
+      })
+    );
 
     const message = response.text || "Keep pushing forward! Every small step brings you closer to mastery.";
     res.json({ success: true, message });
@@ -469,14 +498,16 @@ Return JSON:
   "proTip": "Break execution into two 45-minute Pomodoro blocks to maintain high concentration."
 }`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          responseMimeType: "application/json",
+        },
+      })
+    );
 
     const data = JSON.parse(response.text || "{}");
     res.json({ success: true, ...data });
@@ -513,14 +544,16 @@ Return JSON:
   ]
 }`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          responseMimeType: "application/json",
+        },
+      })
+    );
 
     const data = JSON.parse(response.text || "{}");
     res.json({ success: true, ...data });
@@ -558,14 +591,16 @@ Return JSON:
   ]
 }`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          responseMimeType: "application/json",
+        },
+      })
+    );
 
     const data = JSON.parse(response.text || "{}");
     res.json({ success: true, ...data });
@@ -608,14 +643,16 @@ Return JSON:
   ]
 }`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-      },
-    });
+    const response = await callGeminiWithRetry(() =>
+      ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: prompt,
+        config: {
+          systemInstruction: SYSTEM_PROMPT,
+          responseMimeType: "application/json",
+        },
+      })
+    );
 
     const data = JSON.parse(response.text || "{}");
     res.json({ success: true, ...data });
