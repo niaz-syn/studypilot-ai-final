@@ -6,6 +6,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
 const SYSTEM_PROMPT = `You are StudyPilot AI.
 
 You are an intelligent educational assistant whose goal is to help students learn effectively instead of simply giving answers.
@@ -81,7 +83,7 @@ function registerApiRoutes() {
       const prompt = `${formattedHistory ? `Previous Conversation:\n${formattedHistory}\n\n` : ""}Student: ${message}`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -129,7 +131,7 @@ Return a JSON object matching this structure strictly:
 }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -178,7 +180,7 @@ Return a JSON object matching this schema strictly:
 }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -249,7 +251,7 @@ Return a JSON object matching this schema strictly:
 }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -290,7 +292,7 @@ Return a JSON object matching this schema strictly:
       const prompt = `${docContext}${formattedHistory ? `Previous Chat:\n${formattedHistory}\n\n` : ""}Student Question: ${question}\n\nAnswer the question accurately based primarily on the document context provided above.`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -335,7 +337,7 @@ Return a JSON object:
 }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -364,7 +366,7 @@ Return a JSON object:
       const prompt = `Provide an inspiring motivational message and 3 actionable study hacks for a student who has a ${streak}-day study streak and has completed ${completedTasksCount} tasks this week toward a target of ${goalHours} hours. Keep it positive, empathetic, and highly encouraging!`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -450,7 +452,7 @@ Return JSON:
 }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -495,7 +497,7 @@ Return JSON:
 }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -541,7 +543,7 @@ Return JSON:
 }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
@@ -591,7 +593,7 @@ Return JSON:
 }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: GEMINI_MODEL,
         contents: prompt,
         config: {
           systemInstruction: SYSTEM_PROMPT,
