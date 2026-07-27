@@ -100,6 +100,14 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
       setChatMessages((prev) => [...prev, assistantMsg]);
     } catch (error) {
       console.error("Chat error:", error);
+      const assistantMsg: ChatMessage = {
+        id: `ast-error-${Date.now()}`,
+        role: "assistant",
+        content:
+          "I’m having trouble reaching the AI service right now. Please check your connection or API configuration, then try again.",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setChatMessages((prev) => [...prev, assistantMsg]);
     } finally {
       setChatLoading(false);
     }
@@ -156,6 +164,14 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
       setDocChatMessages((prev) => [...prev, assistantMsg]);
     } catch (error) {
       console.error("Doc chat error:", error);
+      const assistantMsg: ChatMessage = {
+        id: `ast-doc-error-${Date.now()}`,
+        role: "assistant",
+        content:
+          "I couldn’t analyze the selected document right now. Please confirm the document has extracted text and try again.",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setDocChatMessages((prev) => [...prev, assistantMsg]);
     } finally {
       setDocLoading(false);
     }
@@ -398,7 +414,7 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
             />
             <button
               type="submit"
-              disabled={docLoading || !docQuestion.trim()}
+              disabled={docLoading || !docQuestion.trim() || !selectedDocId}
               className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs shadow-md transition flex items-center space-x-1"
             >
               <Send className="w-4 h-4" />
@@ -426,7 +442,7 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
             <button
               onClick={handleGenerateMindmap}
               disabled={mindmapLoading || !mindmapFileId}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition flex items-center space-x-2"
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs shadow-md transition flex items-center space-x-2"
             >
               <GitFork className="w-4 h-4" />
               <span>{mindmapLoading ? "Generating Mind Map..." : "Generate Mind Map Outline"}</span>
