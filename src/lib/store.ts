@@ -91,7 +91,8 @@ const fileTopics = [
 
 export const INITIAL_FILES: UploadedFile[] = Array.from({ length: 52 }, (_, i) => {
   const sub = INITIAL_SUBJECTS[i % INITIAL_SUBJECTS.length];
-  const cat = fileCategories[i % fileCategories.length];
+  // Guarantee every subject has at least one ready one-page PDF demo handout.
+  const cat = i < INITIAL_SUBJECTS.length ? fileCategories[0] : fileCategories[i % fileCategories.length];
   const topic = fileTopics[i % fileTopics.length] || `Topic_Module_${i + 1}`;
   return {
     id: `file-${i + 1}`,
@@ -272,6 +273,10 @@ export function getStorageItem<T>(key: string, defaultValue: T): T {
     if (parsed === null || parsed === undefined) return defaultValue;
     if (Array.isArray(defaultValue)) {
       if (!Array.isArray(parsed) || parsed.length === 0) return defaultValue;
+      // Older deployed demos seeded only a handful of records in localStorage.
+      // Upgrade stale demo data so selection lists and dashboards expose the
+      // full production-ready university content set on the next app load.
+      if (parsed.length < defaultValue.length) return defaultValue;
     }
     return parsed as T;
   } catch (e) {
