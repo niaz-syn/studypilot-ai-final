@@ -222,95 +222,106 @@ export const AssignmentTrackerView: React.FC<AssignmentTrackerViewProps> = ({
       </div>
 
       {/* List View */}
-      {viewMode === "list" && (
-        <div className="space-y-4">
-          {filteredAssignments.map((a) => {
-            const subject = getSubject(a.subjectId);
-            const isDone = a.status === "Completed";
+     {/* List View */}
+{viewMode === "list" && (
+  <div className="space-y-4">
+    {filteredAssignments.map((a) => {
+      const subject = getSubject(a.subjectId);
+      const isDone = a.status === "Completed";
 
-            return (
-              <div
-                key={a.id}
-                className={`p-5 rounded-3xl border transition flex flex-col md:flex-row md:items-center justify-between gap-4 ${
-                  isDone
-                    ? "bg-slate-50/50 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-800 opacity-70"
-                    : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:shadow-md"
+      return (
+        <div
+          key={a.id}
+          onClick={() => handleOpenEdit(a)}
+          className={`p-5 rounded-3xl border transition flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer ${
+            isDone
+              ? "bg-slate-50/50 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-800 opacity-70"
+              : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:shadow-md"
+          }`}
+        >
+          <div className="flex items-start space-x-4">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleComplete(a.id);
+              }}
+              className={`mt-1 p-1.5 rounded-xl border transition ${
+                isDone
+                  ? "bg-emerald-500 border-emerald-500 text-white"
+                  : "border-slate-300 dark:border-slate-600 text-transparent hover:border-purple-500"
+              }`}
+            >
+              <CheckCircle2 className="w-5 h-5 fill-current" />
+            </button>
+
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: subject?.color || "#7C3AED" }} />
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  {subject?.name || "General"}
+                </span>
+                {getUrgencyBadge(a.deadline, a.status)}
+              </div>
+
+              <h3
+                className={`text-base font-bold mt-1 ${
+                  isDone ? "line-through text-slate-400 dark:text-slate-500" : "text-slate-900 dark:text-white"
                 }`}
               >
-                <div className="flex items-start space-x-4">
-                  <button
-                    onClick={() => onToggleComplete(a.id)}
-                    className={`mt-1 p-1.5 rounded-xl border transition ${
-                      isDone
-                        ? "bg-emerald-500 border-emerald-500 text-white"
-                        : "border-slate-300 dark:border-slate-600 text-transparent hover:border-purple-500"
-                    }`}
-                  >
-                    <CheckCircle2 className="w-5 h-5 fill-current" />
-                  </button>
+                {a.title}
+              </h3>
 
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: subject?.color || "#7C3AED" }} />
-                      <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                        {subject?.name || "General"}
-                      </span>
-                      {getUrgencyBadge(a.deadline, a.status)}
-                    </div>
+              {a.description && (
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xl">{a.description}</p>
+              )}
+            </div>
+          </div>
 
-                    <h3
-                      className={`text-base font-bold mt-1 ${
-                        isDone ? "line-through text-slate-400 dark:text-slate-500" : "text-slate-900 dark:text-white"
-                      }`}
-                    >
-                      {a.title}
-                    </h3>
-
-                    {a.description && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xl">{a.description}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between md:justify-end space-x-6 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
-                  <div className="text-left md:text-right">
-                    <div className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center md:justify-end space-x-1">
-                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{a.deadline}</span>
-                    </div>
-                    <span
-                      className={`inline-block mt-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                        a.priority === "High"
-                          ? "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300"
-                          : a.priority === "Medium"
-                          ? "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
-                          : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                      }`}
-                    >
-                      {a.priority} Priority
-                    </span>
-                  </div>
-
-                  <div className="flex items-center space-x-1">
-                    <button
-                      onClick={() => handleOpenEdit(a)}
-                      className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onDeleteAssignment(a.id)}
-                      className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+          <div className="flex items-center justify-between md:justify-end space-x-6 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
+            <div className="text-left md:text-right">
+              <div className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center md:justify-end space-x-1">
+                <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                <span>{a.deadline}</span>
               </div>
-            );
-          })}
+              <span
+                className={`inline-block mt-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                  a.priority === "High"
+                    ? "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300"
+                    : a.priority === "Medium"
+                    ? "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
+                    : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                }`}
+              >
+                {a.priority} Priority
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-1">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenEdit(a);
+                }}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                <Edit2 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteAssignment(a.id);
+                }}
+                className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
-      )}
+      );
+    })}
+  </div>
+)}
 
       {/* Kanban View */}
       {viewMode === "kanban" && (
