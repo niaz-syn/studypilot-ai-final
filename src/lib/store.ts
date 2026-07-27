@@ -50,12 +50,6 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: "sub-18", userId: "student-123", name: "Molecular Biology", color: "#DB2777", teacher: "Dr. Watson", credits: 4, description: "Genomics, Gene Regulation & CRISPR Tech", createdAt: new Date().toISOString() },
   { id: "sub-19", userId: "student-123", name: "Microeconomics", color: "#CA8A04", teacher: "Prof. Keynes", credits: 3, description: "Market Equilibrium, Game Theory & Mechanism Design", createdAt: new Date().toISOString() },
   { id: "sub-20", userId: "student-123", name: "Constitutional Law", color: "#475569", teacher: "Prof. Marshall", credits: 3, description: "Judicial Review, Due Process & Civil Liberties", createdAt: new Date().toISOString() },
-  { id: "sub-21", userId: "student-123", name: "Biomedical Engineering", color: "#16A34A", teacher: "Dr. Imani", credits: 4, description: "Biomaterials, prosthetics, imaging systems & clinical design", createdAt: new Date().toISOString() },
-  { id: "sub-22", userId: "student-123", name: "Environmental Science", color: "#65A30D", teacher: "Prof. Alvarez", credits: 3, description: "Climate systems, conservation policy & sustainability metrics", createdAt: new Date().toISOString() },
-  { id: "sub-23", userId: "student-123", name: "Digital Humanities", color: "#C026D3", teacher: "Dr. Laurent", credits: 3, description: "Computational text analysis, archives & public scholarship", createdAt: new Date().toISOString() },
-  { id: "sub-24", userId: "student-123", name: "Finance", color: "#0891B2", teacher: "Prof. Morgan", credits: 3, description: "Portfolio theory, derivatives, risk models & capital markets", createdAt: new Date().toISOString() },
-  { id: "sub-25", userId: "student-123", name: "Philosophy of Science", color: "#9333EA", teacher: "Dr. Okafor", credits: 3, description: "Scientific explanation, realism, falsifiability & ethics", createdAt: new Date().toISOString() },
-  { id: "sub-26", userId: "student-123", name: "Technical Communication", color: "#2563EB", teacher: "Prof. Harper", credits: 2, description: "Research writing, presentations, documentation & peer review", createdAt: new Date().toISOString() },
 ];
 
 const getFutureDate = (daysAhead: number): string => {
@@ -91,8 +85,7 @@ const fileTopics = [
 
 export const INITIAL_FILES: UploadedFile[] = Array.from({ length: 52 }, (_, i) => {
   const sub = INITIAL_SUBJECTS[i % INITIAL_SUBJECTS.length];
-  // Guarantee every subject has at least one ready one-page PDF demo handout.
-  const cat = i < INITIAL_SUBJECTS.length ? fileCategories[0] : fileCategories[i % fileCategories.length];
+  const cat = fileCategories[i % fileCategories.length];
   const topic = fileTopics[i % fileTopics.length] || `Topic_Module_${i + 1}`;
   return {
     id: `file-${i + 1}`,
@@ -147,8 +140,8 @@ export const INITIAL_NOTES: NoteItem[] = Array.from({ length: 52 }, (_, i) => {
   };
 });
 
-// Generate 50 Flashcard Decks
-export const INITIAL_DECKS: FlashcardDeck[] = Array.from({ length: 50 }, (_, i) => {
+// Generate 30 Flashcard Decks
+export const INITIAL_DECKS: FlashcardDeck[] = Array.from({ length: 30 }, (_, i) => {
   const sub = INITIAL_SUBJECTS[i % INITIAL_SUBJECTS.length];
   const topic = fileTopics[i % fileTopics.length].replace(/_/g, " ");
   return {
@@ -182,30 +175,6 @@ export const INITIAL_SESSIONS: StudySession[] = Array.from({ length: 45 }, (_, i
     status: daysOffset < 0 ? "Completed" : status[i % 2],
     notes: `Focused problem solving and textbook chapter review for ${sub.name}.`,
     createdAt: new Date().toISOString(),
-  };
-});
-
-// Generate 100 completed and ready-to-retake quiz records
-export const INITIAL_QUIZZES = Array.from({ length: 100 }, (_, i) => {
-  const sub = INITIAL_SUBJECTS[i % INITIAL_SUBJECTS.length];
-  const topic = fileTopics[i % fileTopics.length].replace(/_/g, " ");
-  return {
-    id: `quiz-${i + 1}`,
-    topic: `${sub.name}: ${topic}`,
-    difficulty: (["easy", "medium", "hard"] as const)[i % 3],
-    quizType: (["multiple_choice", "true_false", "short_answer", "fill_blank"] as const)[i % 4],
-    score: (i % 6) + 4,
-    createdAt: new Date(Date.now() - 3600000 * (i * 8)).toISOString(),
-    questions: [
-      {
-        id: 1,
-        question: `Which idea best summarizes ${topic}?`,
-        options: ["Core theory", "Unrelated fact", "Formatting rule", "Random variable"],
-        correctAnswer: "Core theory",
-        correctAnswerIndex: 0,
-        explanation: `The topic is a core learning objective in ${sub.name}.`,
-      },
-    ],
   };
 });
 
@@ -273,10 +242,6 @@ export function getStorageItem<T>(key: string, defaultValue: T): T {
     if (parsed === null || parsed === undefined) return defaultValue;
     if (Array.isArray(defaultValue)) {
       if (!Array.isArray(parsed) || parsed.length === 0) return defaultValue;
-      // Older deployed demos seeded only a handful of records in localStorage.
-      // Upgrade stale demo data so selection lists and dashboards expose the
-      // full production-ready university content set on the next app load.
-      if (parsed.length < defaultValue.length) return defaultValue;
     }
     return parsed as T;
   } catch (e) {

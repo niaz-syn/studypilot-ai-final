@@ -39,7 +39,6 @@ import {
   INITIAL_FILES,
   INITIAL_NOTES,
   INITIAL_DECKS,
-  INITIAL_QUIZZES,
   getStorageItem,
   setStorageItem,
 } from "./lib/store";
@@ -87,7 +86,7 @@ export function App() {
     getStorageItem("flashcard_decks", INITIAL_DECKS)
   );
   const [quizHistory, setQuizHistory] = useState<QuizResult[]>(() =>
-    getStorageItem("quiz_history", INITIAL_QUIZZES)
+    getStorageItem("quiz_history", [])
   );
 
   // Active Cross-Feature Context State

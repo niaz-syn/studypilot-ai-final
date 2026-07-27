@@ -26,7 +26,7 @@ Modern students face academic burnout and information overload. Juggling multipl
 
 ## Live Demo
 
-🚀 **Production Deployment**: [https://studypilot-ai-final.vercel.app/](https://studypilot-ai-final.vercel.app/)  
+🚀 **Production Deployment**: [https://studypilot-ai.vercel.app](https://studypilot-ai.vercel.app)  
 ⚡ **Development App**: [https://ais-dev-2uj6u6qcpxkp5iys2d7zak-452567585443.asia-east1.run.app](https://ais-dev-2uj6u6qcpxkp5iys2d7zak-452567585443.asia-east1.run.app)
 
 ---

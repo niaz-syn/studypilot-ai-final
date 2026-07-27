@@ -87,7 +87,12 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || data.error) {
+        throw new Error(data.error || `Server returned HTTP ${res.status}`);
+      }
+
       const assistantReply = data.reply || "I couldn't process that query. Please try asking again!";
 
       const assistantMsg: ChatMessage = {
@@ -98,13 +103,12 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
       };
 
       setChatMessages((prev) => [...prev, assistantMsg]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Chat error:", error);
       const assistantMsg: ChatMessage = {
-        id: `ast-error-${Date.now()}`,
+        id: `ast-${Date.now()}`,
         role: "assistant",
-        content:
-          "I’m having trouble reaching the AI service right now. Please check your connection or API configuration, then try again.",
+        content: error.message || "Unable to reach the backend. Please check your connection or API configuration.",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
       setChatMessages((prev) => [...prev, assistantMsg]);
@@ -151,7 +155,12 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || data.error) {
+        throw new Error(data.error || `Server returned HTTP ${res.status}`);
+      }
+
       const reply = data.reply || "I was unable to analyze the document context.";
 
       const assistantMsg: ChatMessage = {
@@ -162,13 +171,12 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
       };
 
       setDocChatMessages((prev) => [...prev, assistantMsg]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Doc chat error:", error);
       const assistantMsg: ChatMessage = {
-        id: `ast-doc-error-${Date.now()}`,
+        id: `ast-doc-${Date.now()}`,
         role: "assistant",
-        content:
-          "I couldn’t analyze the selected document right now. Please confirm the document has extracted text and try again.",
+        content: error.message || "Unable to reach the backend. Please check your document or API configuration.",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
       setDocChatMessages((prev) => [...prev, assistantMsg]);
@@ -414,7 +422,7 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
             />
             <button
               type="submit"
-              disabled={docLoading || !docQuestion.trim() || !selectedDocId}
+              disabled={docLoading || !docQuestion.trim()}
               className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs shadow-md transition flex items-center space-x-1"
             >
               <Send className="w-4 h-4" />
@@ -442,7 +450,7 @@ export const AIAssistantHub: React.FC<AIAssistantHubProps> = ({
             <button
               onClick={handleGenerateMindmap}
               disabled={mindmapLoading || !mindmapFileId}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs shadow-md transition flex items-center space-x-2"
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition flex items-center space-x-2"
             >
               <GitFork className="w-4 h-4" />
               <span>{mindmapLoading ? "Generating Mind Map..." : "Generate Mind Map Outline"}</span>
