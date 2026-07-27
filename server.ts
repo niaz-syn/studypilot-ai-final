@@ -29,6 +29,14 @@ export const app = express();
 
 app.use(express.json({ limit: "10mb" }));
 
+// Request logging middleware
+app.use((req, _res, next) => {
+  if (req.path.startsWith("/api/")) {
+    console.log(`[API Request] ${req.method} ${req.path} at ${new Date().toISOString()}`);
+  }
+  next();
+});
+
 // Enable CORS for Vercel and local deployments
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -44,6 +52,7 @@ app.use((req, res, next) => {
 const getGeminiClient = () => {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
+    console.error("[Gemini SDK Error] GEMINI_API_KEY environment variable is missing.");
     throw new Error("GEMINI_API_KEY environment variable is missing.");
   }
   return new GoogleGenAI({
@@ -58,19 +67,28 @@ const getGeminiClient = () => {
 
 function handleRouteError(error: any, res: express.Response, fallbackMessage: string) {
   console.error("AI Route Error:", error);
-  const msg = error.message || "";
+  const msg = typeof error === "string" ? error : (error?.message || "");
   if (msg.includes("GEMINI_API_KEY") || msg.includes("apiKey") || msg.includes("API key")) {
-    return res.status(500).json({ error: "Gemini API key is not configured." });
+    return res.status(500).json({ success: false, error: "Gemini API key is not configured.", message: "Please configure GEMINI_API_KEY in your environment variables." });
   }
-  if (error.status === 429 || msg.includes("429") || msg.includes("quota")) {
-    return res.status(429).json({ error: "Gemini quota exceeded." });
+  if (error?.status === 401 || msg.includes("401") || (msg.includes("API_KEY_INVALID") || msg.includes("invalid API key"))) {
+    return res.status(401).json({ success: false, error: "Invalid Gemini API Key.", message: "The provided Gemini API key is invalid or missing permissions." });
   }
-  return res.status(500).json({ error: msg || fallbackMessage });
+  if (error?.status === 429 || msg.includes("429") || msg.includes("quota")) {
+    return res.status(429).json({ success: false, error: "Gemini quota exceeded.", message: "You have exceeded your Gemini API rate limit or quota. Please retry shortly." });
+  }
+  return res.status(500).json({ success: false, error: msg || fallbackMessage, message: fallbackMessage });
 }
 
 // Health check endpoint
 app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", service: "StudyPilot AI API" });
+  const hasApiKey = Boolean(process.env.GEMINI_API_KEY);
+  res.json({
+    status: "ok",
+    service: "StudyPilot AI API",
+    geminiConfigured: hasApiKey,
+    time: new Date().toISOString()
+  });
 });
 
 // 1. AI Chat Assistant Route
@@ -78,7 +96,7 @@ const chatHandler = async (req: express.Request, res: express.Response) => {
   try {
     const { message, chatHistory = [] } = req.body;
     if (!message || typeof message !== "string") {
-      return res.status(400).json({ error: "Message string is required." });
+      return res.status(400).json({ success: false, error: "Message string is required." });
     }
 
     const ai = getGeminiClient();
@@ -90,7 +108,7 @@ const chatHandler = async (req: express.Request, res: express.Response) => {
     const prompt = `${formattedHistory ? `Previous Conversation:\n${formattedHistory}\n\n` : ""}Student: ${message}`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -99,7 +117,7 @@ const chatHandler = async (req: express.Request, res: express.Response) => {
     });
 
     const reply = response.text || "I apologize, I could not process that query. Could you rephrase your question?";
-    res.json({ reply });
+    res.json({ success: true, reply });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to generate response from Gemini AI");
   }
@@ -137,7 +155,7 @@ Return a JSON object matching this structure strictly:
 }`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -147,7 +165,7 @@ Return a JSON object matching this structure strictly:
 
     const text = response.text || "{}";
     const planData = JSON.parse(text);
-    res.json(planData);
+    res.json({ success: true, ...planData });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to generate study plan");
   }
@@ -162,7 +180,7 @@ const quizHandler = async (req: express.Request, res: express.Response) => {
     const { topic, difficulty = "Medium", questionCount = 5 } = req.body;
 
     if (!topic) {
-      return res.status(400).json({ error: "Topic is required for generating a quiz." });
+      return res.status(400).json({ success: false, error: "Topic is required for generating a quiz." });
     }
 
     const ai = getGeminiClient();
@@ -185,7 +203,7 @@ Return a JSON object matching this schema strictly:
 }`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -195,7 +213,7 @@ Return a JSON object matching this schema strictly:
 
     const text = response.text || "{}";
     const quizData = JSON.parse(text);
-    res.json(quizData);
+    res.json({ success: true, ...quizData });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to generate quiz");
   }
@@ -209,7 +227,7 @@ const summarizeHandler = async (req: express.Request, res: express.Response) => 
   try {
     const { notesText, mode = "detailed", fileName = "" } = req.body;
     if (!notesText || typeof notesText !== "string") {
-      return res.status(400).json({ error: "notesText string is required." });
+      return res.status(400).json({ success: false, error: "notesText string is required." });
     }
 
     const ai = getGeminiClient();
@@ -255,7 +273,7 @@ Return a JSON object matching this schema strictly:
 }`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -265,7 +283,7 @@ Return a JSON object matching this schema strictly:
 
     const text = response.text || "{}";
     const summaryData = JSON.parse(text);
-    res.json(summaryData);
+    res.json({ success: true, ...summaryData });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to summarize notes");
   }
@@ -279,7 +297,7 @@ const docChatHandler = async (req: express.Request, res: express.Response) => {
   try {
     const { docText, docName, question, chatHistory = [] } = req.body;
     if (!question) {
-      return res.status(400).json({ error: "Question is required." });
+      return res.status(400).json({ success: false, error: "Question is required." });
     }
 
     const ai = getGeminiClient();
@@ -295,7 +313,7 @@ const docChatHandler = async (req: express.Request, res: express.Response) => {
     const prompt = `${docContext}${formattedHistory ? `Previous Chat:\n${formattedHistory}\n\n` : ""}Student Question: ${question}\n\nAnswer the question accurately based primarily on the document context provided above.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -304,7 +322,7 @@ const docChatHandler = async (req: express.Request, res: express.Response) => {
     });
 
     const reply = response.text || "I was unable to analyze the document for this question.";
-    res.json({ reply });
+    res.json({ success: true, reply });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to answer document question");
   }
@@ -318,7 +336,7 @@ const flashcardsHandler = async (req: express.Request, res: express.Response) =>
   try {
     const { text, cardCount = 8, subject = "General" } = req.body;
     if (!text) {
-      return res.status(400).json({ error: "Text content is required." });
+      return res.status(400).json({ success: false, error: "Text content is required." });
     }
 
     const ai = getGeminiClient();
@@ -339,7 +357,7 @@ Return a JSON object:
 }`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -349,7 +367,7 @@ Return a JSON object:
 
     const textRes = response.text || "{}";
     const data = JSON.parse(textRes);
-    res.json(data);
+    res.json({ success: true, ...data });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to generate flashcards");
   }
@@ -367,7 +385,7 @@ app.post("/api/ai/motivation", async (req, res) => {
     const prompt = `Provide an inspiring motivational message and 3 actionable study hacks for a student who has a ${streak}-day study streak and has completed ${completedTasksCount} tasks this week toward a target of ${goalHours} hours. Keep it positive, empathetic, and highly encouraging!`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -376,7 +394,7 @@ app.post("/api/ai/motivation", async (req, res) => {
     });
 
     const message = response.text || "Keep pushing forward! Every small step brings you closer to mastery.";
-    res.json({ message });
+    res.json({ success: true, message });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to generate motivational message");
   }
@@ -387,7 +405,7 @@ const breakdownHandler = async (req: express.Request, res: express.Response) => 
   try {
     const { assignmentTitle, description, deadline, subject } = req.body;
     if (!assignmentTitle) {
-      return res.status(400).json({ error: "Assignment title is required." });
+      return res.status(400).json({ success: false, error: "Assignment title is required." });
     }
 
     const ai = getGeminiClient();
@@ -452,7 +470,7 @@ Return JSON:
 }`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -461,7 +479,7 @@ Return JSON:
     });
 
     const data = JSON.parse(response.text || "{}");
-    res.json(data);
+    res.json({ success: true, ...data });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to breakdown assignment");
   }
@@ -496,7 +514,7 @@ Return JSON:
 }`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -505,7 +523,7 @@ Return JSON:
     });
 
     const data = JSON.parse(response.text || "{}");
-    res.json(data);
+    res.json({ success: true, ...data });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to compute exam readiness");
   }
@@ -541,7 +559,7 @@ Return JSON:
 }`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -550,7 +568,7 @@ Return JSON:
     });
 
     const data = JSON.parse(response.text || "{}");
-    res.json(data);
+    res.json({ success: true, ...data });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to generate productivity insights");
   }
@@ -564,7 +582,7 @@ const mindmapHandler = async (req: express.Request, res: express.Response) => {
   try {
     const { text, topic = "General" } = req.body;
     if (!text) {
-      return res.status(400).json({ error: "Text or topic is required." });
+      return res.status(400).json({ success: false, error: "Text or topic is required." });
     }
 
     const ai = getGeminiClient();
@@ -590,7 +608,7 @@ Return JSON:
 }`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -599,7 +617,7 @@ Return JSON:
     });
 
     const data = JSON.parse(response.text || "{}");
-    res.json(data);
+    res.json({ success: true, ...data });
   } catch (error: any) {
     handleRouteError(error, res, "Failed to generate mind map");
   }
