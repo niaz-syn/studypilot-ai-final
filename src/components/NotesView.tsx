@@ -359,7 +359,10 @@ const NoteCard: React.FC<NoteCardProps> = ({
   const subject = subjects.find((s) => s.id === note.subjectId);
 
   return (
-    <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4 group">
+    <div
+      onClick={() => onEdit(note)}
+      className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4 group cursor-pointer"
+    >
       <div className="space-y-3">
         {/* Subject & Pin */}
         <div className="flex items-center justify-between">
@@ -372,7 +375,10 @@ const NoteCard: React.FC<NoteCardProps> = ({
           </span>
 
           <button
-            onClick={() => onTogglePin(note)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onTogglePin(note);
+            }}
             className={`p-1.5 rounded-lg transition ${
               note.isPinned
                 ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60"
@@ -407,21 +413,30 @@ const NoteCard: React.FC<NoteCardProps> = ({
 
         <div className="flex items-center space-x-1">
           <button
-            onClick={() => onDownload(note)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDownload(note);
+            }}
             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
             title="Download TXT"
           >
             <Download className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => onEdit(note)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(note);
+            }}
             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
             title="Edit"
           >
             <Edit2 className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => onDelete(note.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(note.id);
+            }}
             className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 transition"
             title="Delete"
           >
