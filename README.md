@@ -1,70 +1,209 @@
 # StudyPilot AI
 
-> **An Intelligent AI-Powered Educational Assistant & Final University Project**
+> **An Intelligent AI-Powered Educational Assistant & University Final Project**
 
-StudyPilot AI is a comprehensive study management and academic assistant platform designed to help university and high school students optimize their learning, organize assignments, generate personalized study schedules, track study habits, and leverage state-of-the-art AI to master difficult subjects.
-
----
-
-## Overview
-
-### The Problem
-Modern students face academic burnout and information overload. Juggling multiple subjects, tight assignment deadlines, complex lecture slides, and unorganized study schedules leads to ineffective passive learning and last-minute cramming. Standard task managers lack educational intelligence, while standard AI chatbots give direct answers without fostering genuine concept comprehension.
-
-### Target Audience
-- University and college students managing heavy course loads.
-- High school students preparing for standardized exams.
-- Self-directed learners and academic researchers needing intelligent document synthesis and structured study planning.
-
-### The Solution
-**StudyPilot AI** bridges academic organization and cognitive learning:
-1. **Centralized Academic Hub**: Tracks assignments, study sessions, course subjects, and calendars with interactive Kanban boards and Pomodoro timers.
-2. **AI Learning Engine**: Uses Google Gemini API (`gemini-3.6-flash`) with pedagogical system instructions designed to guide students step-by-step through Socratic questioning, active recall quizzes, interactive flashcards, and multi-mode document summarization (PDF/DOCX/TXT).
-3. **Hybrid Persistence**: Features immediate local state storage backed by optional Firebase Firestore cloud synchronization and authentication.
+StudyPilot AI is a comprehensive AI-powered academic companion designed to help university and high school students manage their studies, organize assignments, create personalized study plans, analyze course materials, and improve learning through artificial intelligence.
 
 ---
 
-## Live Demo
+# 📚 Table of Contents
 
-🚀 **Production Deployment**: [https://studypilot-ai.vercel.app](https://studypilot-ai.vercel.app)  
-⚡ **Development App**: [https://ais-dev-2uj6u6qcpxkp5iys2d7zak-452567585443.asia-east1.run.app](https://ais-dev-2uj6u6qcpxkp5iys2d7zak-452567585443.asia-east1.run.app)
-
----
-
-## Features
-
-- **User Authentication**: Google OAuth and Email/Password sign-in powered by Firebase Authentication with local guest session support.
-- **Interactive Dashboard**: High-level academic overview showing daily study targets, active study streak, upcoming assignment deadlines, and quick navigation.
-- **Study Planner & Pomodoro Timer**: Multi-session study planner with integrated Pomodoro timer, break cycles, audio alerts, and subject tagging.
-- **Assignment Manager**: Full Kanban and list views for tracking assignment status (To Do, In Progress, Completed), priority levels, and urgency badges.
-- **Academic Calendar**: Monthly visual calendar with date-filtered study sessions and upcoming assignment deadlines.
-- **Subject Manager**: Custom subject creation with custom color codes, target weekly study hours, and linked resource tracking.
-- **AI Study Assistant (AI Hub)**: Interactive multi-turn chat supporting general academic inquiries, Socratic concept explanations, step-by-step problem solving, and study hacks.
-- **Document Chat**: Upload and interrogate course documents (PDF, DOCX, TXT) with context-bounded AI retrieval.
-- **AI Notes & Document Summarizer**: Generate structured summaries from uploaded lecture notes and slide decks in multiple modes (Concise, Detailed, Bullet Points, Exam Review, Executive, Formula Sheet).
-- **Quiz Generator**: Generate custom multiple-choice quizzes with instant grading, score analytics, and step-by-step answer explanations.
-- **Flashcard Generator**: Generate digital flashcard decks with active recall flip animations and review progress tracking.
-- **Progress Analytics**: Visual analytics powered by Recharts showing weekly study hour trends, subject distribution charts, and completion rates.
-- **Study Streak Counter**: Daily activity tracking with motivational coaching messages.
-- **Pomodoro Timer**: Customizable focus and break intervals with sound synthesis and confetti celebrations.
-- **Notifications System**: Real-time top navigation bell with urgent deadline alerts and study reminders.
-- **Local Storage & Firebase Synchronization**: Dual persistence engine supporting immediate offline local usage and secure Firestore cloud sync.
-- **Profile & Settings Management**: Manage user profiles, academic goals, daily target study hours, and data export/import.
-- **Dark Mode**: Full system dark and light theme switching with persistent user preference.
-- **Responsive Design**: Desktop-first and mobile-optimized layouts built with Tailwind CSS.
+- Overview
+- Features
+- Live Demo
+- Technologies Used
+- AI Architecture
+- System Architecture
+- Local Storage
+- Installation & Setup
+- Folder Structure
+- Screenshots
+- Deployment
+- Future Improvements
+- License
 
 ---
 
-## AI Feature & System Prompt
+# 📖 Overview
 
-### How the AI Works
-StudyPilot AI communicates with the Google Gemini API (`gemini-3.6-flash`) via a secure Express backend (`/api/ai/*`). The AI is explicitly configured with a pedagogical system prompt to guide students toward active recall and deep understanding rather than simply outputting raw solutions.
+## The Problem
 
-- **Model Used**: `gemini-3.6-flash` via `@google/genai` TypeScript SDK
-- **Backend Architecture**: Express.js proxy ensuring API key secrecy
-- **Capabilities**: Socratic AI tutoring, PDF/DOCX/TXT document analysis, flashcards synthesis, multi-mode note summarization, structured JSON quiz generation, and adaptive study schedule creation.
+Students often struggle to manage multiple courses, assignments, deadlines, lecture notes, and study schedules simultaneously. Traditional productivity applications organize tasks but rarely provide intelligent academic assistance. Likewise, generic AI chatbots answer questions without helping students actively learn or retain information.
 
-### Exact System Prompt
+---
+
+## Target Audience
+
+StudyPilot AI is designed for:
+
+- University students
+- College students
+- High school students
+- Self-directed learners
+- Researchers
+- Competitive exam candidates
+
+---
+
+## The Solution
+
+StudyPilot AI combines academic organization with artificial intelligence into one unified platform.
+
+The application provides:
+
+- AI tutoring for difficult concepts
+- Assignment management
+- Personalized study planning
+- Course document summarization
+- Quiz generation
+- Flashcard generation
+- Subject management
+- Study analytics
+- Calendar scheduling
+- Pomodoro productivity timer
+- Cloud synchronization using Firebase
+
+---
+
+# ✨ Key Features
+
+## 🤖 Artificial Intelligence
+
+- AI Academic Tutor
+- AI Document Chat
+- AI Document Summarizer
+- AI Quiz Generator
+- AI Flashcard Generator
+- AI Study Planner
+- AI Assignment Breakdown
+- AI Exam Readiness Assistant
+- AI Productivity Insights
+- AI Mind Map Outline Generator
+
+---
+
+## 📚 Academic Management
+
+- Assignment Manager
+- Subject Manager
+- Calendar
+- Study Planner
+- Notes Manager
+- Upload Center
+- Dashboard
+- Progress Analytics
+
+---
+
+## 👤 User Features
+
+- Firebase Authentication
+- Firestore Cloud Sync
+- Offline Local Storage
+- Dark Theme
+- Light Theme
+- Responsive Design
+- Mobile Friendly Interface
+
+---
+
+# 🌐 Live Demo
+
+## Production Deployment
+
+https://studypilot-ai-final.vercel.app/
+
+---
+
+# 🚀 Technologies Used
+
+## Frontend
+
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+- Lucide React
+- Recharts
+
+---
+
+## Backend
+
+- Node.js
+- Express.js
+
+---
+
+## Artificial Intelligence
+
+- Google Gemini API
+- @google/genai SDK
+
+---
+
+## Database
+
+- Firebase Firestore
+- Local Storage
+
+---
+
+## Authentication
+
+- Firebase Authentication
+
+---
+
+## Deployment
+
+- Vercel
+
+---
+
+## Version Control
+
+- Git
+- GitHub
+
+---
+
+# 🤖 AI Architecture
+
+StudyPilot AI securely communicates with the Google Gemini API through an Express backend.
+
+The backend protects the API key by ensuring all AI requests are processed server-side.
+
+Current AI capabilities include:
+
+- Intelligent tutoring
+- Concept explanations
+- Document summarization
+- Flashcard generation
+- Quiz generation
+- Study plan generation
+- Assignment breakdown
+- Exam readiness estimation
+- Productivity insights
+- Mind map generation
+
+---
+
+## AI Model
+
+Google Gemini Flash
+
+SDK:
+
+```
+@google/genai
+```
+
+---
+
+## AI System Prompt
+
 ```text
 You are StudyPilot AI.
 
@@ -88,70 +227,176 @@ Always:
 
 ---
 
-## Technologies Used
+# 🏗️ System Architecture
 
-- **Frontend Framework**: React 18 with TypeScript and Vite
-- **UI & Styling**: Tailwind CSS, Lucide React Icons, Framer Motion
-- **Data Visualization**: Recharts, Canvas-Confetti
-- **Backend Server**: Node.js & Express
-- **AI Integration**: Google Gemini API (`@google/genai` SDK)
-- **Database & Authentication**: Firebase Firestore & Firebase Auth
-- **Deployment & Hosting**: Vercel & Google Cloud Run
+```text
+                React + Vite
+                     │
+                     ▼
+             Express Backend API
+                     │
+                     ▼
+              Google Gemini API
+                     │
+                     ▼
+              JSON API Response
+                     │
+                     ▼
+             StudyPilot AI Interface
+
+Authentication
+└── Firebase Authentication
+
+Database
+├── Local Storage
+└── Firebase Firestore
+```
 
 ---
 
-## Installation & Local Setup
+# 💾 Local Storage
 
-### Prerequisites
-- Node.js (v18.x or higher)
-- npm (v9.x or higher)
+StudyPilot AI stores the following data locally:
+
+- User preferences
+- Theme
+- Dashboard settings
+- Study sessions
+- Subjects
+- Assignments
+- Notes
+- Flashcards
+- Quiz history
+- Chat history
+
+When Firebase is configured, local data can also be synchronized with Firestore.
+
+---
+
+# ⚙️ Installation & Local Setup
+
+## Prerequisites
+
+Before running StudyPilot AI locally, ensure the following software is installed:
+
+- Node.js (v18 or later)
+- npm (v9 or later)
+- Git
 - Google Gemini API Key (from Google AI Studio)
-
-### Step-by-Step Instructions
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/your-username/studypilot-ai.git
-   cd studypilot-ai
-   ```
-
-2. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables**
-   Create a `.env` file in the root directory by copying `.env.example`:
-   ```bash
-   cp .env.example .env
-   ```
-   Add your Google Gemini API key:
-   ```env
-   GEMINI_API_KEY="AIzaSyYourActualGeminiApiKey"
-   PORT=3000
-   ```
-
-4. **Start Development Server**
-   ```bash
-   npm run dev
-   ```
-   Open your browser and navigate to `http://localhost:3000`.
+- Firebase Project (Optional)
 
 ---
 
-## Folder Structure
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/niaz-syn/studypilot-ai-final.git
+cd studypilot-ai-final
+```
+
+---
+
+## 2. Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+## 3. Configure Environment Variables
+
+Create a `.env` file in the project root.
+
+You can copy the example configuration:
+
+```bash
+cp .env.example .env
+```
+
+Replace the placeholder values with your own configuration.
+
+```env
+# =====================================
+# Google Gemini API
+# =====================================
+
+GEMINI_API_KEY=your_gemini_api_key
+
+# =====================================
+# Firebase Configuration
+# =====================================
+
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+
+VITE_FIREBASE_PROJECT_ID=your-project-id
+
+VITE_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+
+VITE_FIREBASE_APP_ID=your_app_id
+
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+> **Important**
+>
+> Never commit your `.env` file or API keys to GitHub.
+> Store all secrets securely using local environment variables or your hosting platform (e.g., Vercel Environment Variables).
+
+---
+
+## 4. Start the Development Server
+
+```bash
+npm run dev
+```
+
+The application will be available at:
 
 ```
-studypilot-ai/
-├── public/                 # Static assets and icons
+http://localhost:3000
+```
+
+---
+
+## 5. Build for Production
+
+```bash
+npm run build
+```
+
+---
+
+## 6. Preview the Production Build
+
+```bash
+npm run preview
+```
+
+---
+
+# 📁 Folder Structure
+
+```text
+studypilot-ai-final/
+│
+├── public/
+│   ├── favicon.ico
+│   ├── logo.png
+│   └── assets/
+│
 ├── src/
-│   ├── components/         # Modular React UI components
+│   │
+│   ├── components/
 │   │   ├── AIAssistantHub.tsx
 │   │   ├── AssignmentTrackerView.tsx
 │   │   ├── AuthModal.tsx
 │   │   ├── CalendarView.tsx
 │   │   ├── DashboardView.tsx
-│   │   ├── GlobalSearchModal.tsx
 │   │   ├── LandingPage.tsx
 │   │   ├── Navbar.tsx
 │   │   ├── NotesView.tsx
@@ -164,62 +409,336 @@ studypilot-ai/
 │   │   ├── SummarizerView.tsx
 │   │   ├── TopNav.tsx
 │   │   └── UploadCenterView.tsx
-│   ├── lib/                # Storage, Firebase & utility helpers
+│   │
+│   ├── lib/
 │   │   ├── firebase.ts
-│   │   └── store.ts
-│   ├── App.tsx             # Root React Application Component
-│   ├── main.tsx            # React DOM Entrypoint
-│   ├── types.ts            # Shared TypeScript Types & Interfaces
-│   └── index.css           # Global Tailwind CSS Entrypoint
-├── server.ts               # Express Backend Proxy for Gemini API
-├── vercel.json             # Vercel Deployment Configuration
-├── .env.example            # Environment Variable Specification
-├── package.json            # Manifest & Dependency Specifications
-└── README.md               # Project Documentation
+│   │   ├── store.ts
+│   │   └── utils.ts
+│   │
+│   ├── hooks/
+│   ├── types/
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
+│
+├── server.ts
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+├── vercel.json
+├── .env.example
+├── README.md
+└── screenshots/
 ```
 
 ---
 
-## Screenshots
+# 📸 Application Screenshots
 
-*(Screenshots can be captured and inserted below after deployment)*
-
-### Home Page / Landing
-![Home Page](https://via.placeholder.com/800x450.png?text=StudyPilot+AI+-+Home+Landing+Page)
-
-### Dashboard
-![Dashboard](https://via.placeholder.com/800x450.png?text=StudyPilot+AI+-+Dashboard+Overview)
-
-### AI Assistant & Document Chat
-![AI Assistant](https://via.placeholder.com/800x450.png?text=StudyPilot+AI+-+AI+Assistant+Hub)
-
-### Study Planner & Pomodoro
-![Study Planner](https://via.placeholder.com/800x450.png?text=StudyPilot+AI+-+Study+Planner)
-
-### Document Summarizer
-![Document Summarizer](https://via.placeholder.com/800x450.png?text=StudyPilot+AI+-+Document+Summarizer)
+The following screenshots demonstrate the primary features of StudyPilot AI.
 
 ---
 
-## Deployment to Vercel
+## Dashboard
 
-1. **Push Code to GitHub**:
-   Ensure all changes are committed and pushed to a public or private GitHub repository.
-
-2. **Connect to Vercel**:
-   - Log in to your [Vercel Dashboard](https://vercel.com).
-   - Click **Add New** > **Project** and select your GitHub repository.
-
-3. **Configure Environment Variables**:
-   In Vercel project settings, add:
-   - `GEMINI_API_KEY`: Your Gemini API key from Google AI Studio.
-
-4. **Deploy**:
-   - Vercel automatically detects Vite and uses `npm run build`.
-   - Click **Deploy**. Vercel will build static assets into `dist/` and route API calls seamlessly.
+![Dashboard](screenshots/dashboard.png)
 
 ---
 
-## License
+## AI Assistant Hub
 
-This project is open-source and created as a **University Final Project**. Feel free to use, modify, and distribute under the MIT License.
+![AI Assistant](screenshots/assistant.png)
+
+---
+
+## Study Planner
+
+![Study Planner](screenshots/planner.png)
+
+---
+
+## Upload Center
+
+![Upload Center](screenshots/upload-center.png)
+
+---
+
+## Quiz Generator
+
+![Quiz Generator](screenshots/quiz-generator.png)
+
+---
+
+## Progress Analytics
+
+![Analytics](screenshots/analytics.png)
+
+---
+
+## Calendar
+
+![Calendar](screenshots/calendar.png)
+
+---
+
+## Subject Management
+
+![Subjects](screenshots/subjects.png)
+
+---
+
+## Assignment Manager
+
+![Assignments](screenshots/assignments.png)
+
+---
+
+## Settings
+
+![Settings](screenshots/settings.png)
+
+---
+
+# 🚀 Deployment
+
+StudyPilot AI is deployed using **Vercel**, providing automatic builds, continuous deployment, and global hosting.
+
+## Live Application
+
+**Production Deployment**
+
+https://studypilot-ai-final.vercel.app/
+
+---
+
+## Vercel Build Configuration
+
+| Setting | Value |
+|----------|-------|
+| Framework Preset | Vite |
+| Root Directory | `./` |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+| Install Command | `npm install` |
+
+---
+
+## Required Environment Variables
+
+Configure the following environment variables in the Vercel Dashboard before deploying.
+
+### Required
+
+```env
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+### Optional (Firebase)
+
+```env
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+
+VITE_FIREBASE_PROJECT_ID=your-project-id
+
+VITE_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+
+VITE_FIREBASE_APP_ID=your_app_id
+
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+---
+
+## Deployment Steps
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/niaz-syn/studypilot-ai-final.git
+```
+
+---
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+### 3. Configure Environment Variables
+
+Create a `.env` file using `.env.example`.
+
+---
+
+### 4. Push the Repository to GitHub
+
+```bash
+git add .
+git commit -m "Initial deployment"
+git push origin main
+```
+
+---
+
+### 5. Import into Vercel
+
+- Sign in to Vercel
+- Click **Add New Project**
+- Import the GitHub repository
+- Configure environment variables
+- Click **Deploy**
+
+---
+
+### 6. Continuous Deployment
+
+Every push to the **main** branch automatically triggers a new production deployment.
+
+---
+
+# 🔒 Security
+
+StudyPilot AI follows common security practices.
+
+- Google Gemini API keys remain server-side.
+- Environment variables are managed through Vercel.
+- Sensitive credentials are excluded from Git using `.gitignore`.
+- Firebase Authentication manages user authentication.
+- Firestore Security Rules protect cloud data.
+- No secrets are stored in the public repository.
+
+---
+
+# 📈 Future Improvements
+
+The following enhancements are planned for future releases.
+
+### Artificial Intelligence
+
+- AI-generated visual mind maps
+- Voice-based AI tutoring
+- AI lecture transcription
+- AI-powered revision recommendations
+- Adaptive learning paths
+- Personalized study coaching
+- AI citation generation
+- Research paper assistant
+
+---
+
+### Productivity
+
+- Study groups
+- Shared workspaces
+- Real-time collaboration
+- Smart notifications
+- Email reminders
+- Mobile application
+- Offline document indexing
+- Calendar synchronization
+
+---
+
+### Learning Features
+
+- OCR for handwritten notes
+- PDF annotation
+- Interactive flashcard review
+- Spaced repetition algorithm
+- Practice examinations
+- Performance prediction
+- Subject difficulty analysis
+- Semester progress tracking
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+If you would like to improve StudyPilot AI:
+
+1. Fork the repository.
+2. Create a feature branch.
+
+```bash
+git checkout -b feature/new-feature
+```
+
+3. Commit your changes.
+
+```bash
+git commit -m "Add new feature"
+```
+
+4. Push your branch.
+
+```bash
+git push origin feature/new-feature
+```
+
+5. Open a Pull Request.
+
+---
+
+# 📝 License
+
+This project was developed as an **individual university final project**.
+
+It is intended for educational, learning, and demonstration purposes.
+
+You are free to study the code, modify it, and build upon it for personal or educational use.
+
+---
+
+# 🙏 Acknowledgements
+
+Special thanks to the following technologies and communities:
+
+- Google Gemini API
+- Firebase
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Express.js
+- Vercel
+- GitHub
+- Lucide React
+- Recharts
+- Framer Motion
+
+---
+
+# 👨‍💻 Author
+
+**Niaz**
+
+University Final Project
+
+GitHub Repository:
+
+https://github.com/niaz-syn/studypilot-ai-final
+
+Live Demo:
+
+https://studypilot-ai-final.vercel.app/
+
+---
+
+# ⭐ Project Summary
+
+StudyPilot AI is a modern AI-powered educational platform that combines intelligent tutoring, study planning, assignment management, document analysis, quiz generation, flashcards, analytics, and productivity tools into a single application.
+
+Built with **React**, **TypeScript**, **Node.js**, **Express**, **Firebase**, **Google Gemini AI**, and **Vercel**, the project demonstrates a complete full-stack architecture focused on enhancing student learning through artificial intelligence.
+
+---
+
+**Thank you for exploring StudyPilot AI!**
