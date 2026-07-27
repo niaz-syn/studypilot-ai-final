@@ -389,7 +389,7 @@ Return a JSON object:
       }
 
       const ai = getGeminiClient();
-      const prompt = `Break down the following academic assignment into 3 to 5 realistic, step-by-step subtasks with estimated duration in minutes and milestone deadlines:
+      const prompt = `Perform a comprehensive AI breakdown for the following academic assignment:
 Title: "${assignmentTitle}"
 Subject: "${subject || "General"}"
 Deadline: "${deadline || "In 3 days"}"
@@ -399,16 +399,54 @@ Return JSON:
 {
   "assignmentTitle": "${assignmentTitle}",
   "estimatedTotalMinutes": 180,
+  "estimatedTime": "3 hours 0 mins",
+  "difficulty": "Moderate",
+  "priority": "High",
+  "completionEstimate": "${deadline || "In 3 days"}",
+  "resources": [
+    "Recommended course textbook & official documentation",
+    "Online code sandbox / graphing calculator tool"
+  ],
+  "checklist": [
+    "Read rubric and requirements carefully",
+    "Draft initial outline or structural architecture",
+    "Implement core solution / write draft sections",
+    "Review edge cases, format citations, and verify outputs"
+  ],
   "subtasks": [
     {
       "id": "st-1",
-      "title": "Subtask title",
+      "title": "Requirement Analysis & Outline",
       "estimatedMinutes": 45,
       "suggestedDaysBeforeDeadline": 2,
-      "details": "Actionable guidance for completing this subtask"
+      "details": "Analyze assignment prompt and draft core section headings."
+    },
+    {
+      "id": "st-2",
+      "title": "Core Implementation / Draft Writing",
+      "estimatedMinutes": 90,
+      "suggestedDaysBeforeDeadline": 1,
+      "details": "Execute main calculations, programming logic, or argument synthesis."
+    },
+    {
+      "id": "st-3",
+      "title": "Final Verification & Proofreading",
+      "estimatedMinutes": 45,
+      "suggestedDaysBeforeDeadline": 0,
+      "details": "Review against rubric, format citations, and run test suites."
     }
   ],
-  "proTip": "Pro tip to avoid procrastination on this assignment"
+  "studyPlan": [
+    "Day 1: Gather references and outline solution structure.",
+    "Day 2: Implement core logic / write main content body.",
+    "Day 3: Review, edit, and submit final assignment."
+  ],
+  "dependencies": [
+    "Prerequisite understanding of core course concepts",
+    "Access to university library databases / IDE software"
+  ],
+  "riskAnalysis": "Watch out for last-minute environment configuration bugs or tight formatting rubrics.",
+  "proTip": "Break execution into two 45-minute Pomodoro blocks to maintain high concentration."
 }`;
 
       const response = await ai.models.generateContent({
