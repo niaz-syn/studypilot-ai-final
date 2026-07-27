@@ -580,8 +580,9 @@ app.post("/api/productivity-insights", productivityHandler);
 // 9. Text Mind Map Outline Generator Route
 const mindmapHandler = async (req: express.Request, res: express.Response) => {
   try {
-    const { text, topic = "General" } = req.body;
-    if (!text) {
+    const { text = "", topic = "General" } = req.body;
+    const contentText = text || topic;
+    if (!contentText) {
       return res.status(400).json({ success: false, error: "Text or topic is required." });
     }
 
@@ -589,12 +590,12 @@ const mindmapHandler = async (req: express.Request, res: express.Response) => {
     const prompt = `Generate a structured hierarchical text mind map / outline for studying topic "${topic}":
 Content:
 """
-${text.slice(0, 20000)}
+${contentText.slice(0, 20000)}
 """
 
 Return JSON:
 {
-  "centralTopic": "Central Topic Title",
+  "centralTopic": "${topic || "Central Topic Title"}",
   "nodes": [
     {
       "id": "node-1",
